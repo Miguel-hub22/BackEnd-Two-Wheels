@@ -24,64 +24,49 @@ import com.twowheels.twowheels.model.Postagem;
 import com.twowheels.twowheels.repository.PostagemRepository;
 import com.twowheels.twowheels.repository.TemaRepository;
 
-@RestController /* ele receber uma informação */
+//defino que o arquivo vai ser uma classe controladora 
+@RestController
+
+//endpoint de postagem
 @RequestMapping("/postagens")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
-public class PostagemController {
-	
+
+@CrossOrigin("*")
+public class PostagemController{
+ 
 	@Autowired
-	private PostagemRepository postagemRepository;
+	private PostagemRepository repository;
 	
-	@Autowired
-	private TemaRepository temaRepository;
-	
-	@GetMapping /* ele puxar os dados*/
-	public ResponseEntity<List<Postagem>> getAll(){
-		return ResponseEntity.ok(postagemRepository.findAll());
-	}
-	@GetMapping("/{id}") /* puxa o id */
-	public ResponseEntity<Postagem> getById(@PathVariable Long id){
-		return postagemRepository.findById(id)
-				.map(resposta -> ResponseEntity.ok(resposta))
-				.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-	}
-	@GetMapping("/titulo/{titulo}") /* por titulo */
-	public ResponseEntity<List<Postagem>> getByTitulo(@PathVariable String titulo){
-		return ResponseEntity.ok(postagemRepository.findAllByTituloContainingIgnoreCase(titulo));
-		
-	}
-	@PostMapping /* ele faz postagem */
-	public ResponseEntity<Postagem> post(@Valid @RequestBody Postagem postagem){
-		if (temaRepository.existsById(postagem.getTema().getId()))
-		return ResponseEntity.status(HttpStatus.CREATED)
-				.body(postagemRepository.save(postagem));
-		
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+	@GetMapping
+	public ResponseEntity<List<Postagem>> GetAll() {
+		return ResponseEntity.ok(repository.findAll());
 	}
 		
-	@PutMapping  /*responderá a todas as requisições do tipo HTTP PUT*/
-	public ResponseEntity<Postagem>put (@Valid @RequestBody Postagem postagem){
-		if(postagemRepository.existsById(postagem.getId())){
-			
+	@GetMapping("/{id}")
+	public ResponseEntity<Postagem> GetById(@PathVariable Long id){
+		return repository.findById(id)
+				.map(resp -> ResponseEntity.ok(resp))
+				.orElse(ResponseEntity.notFound().build());
 		
-		  if(temaRepository.existsById(postagem.getTema().getId()))
-			return ResponseEntity.status(HttpStatus.OK)
-				.body(postagemRepository.save(postagem));
-			
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();	
-		}
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 	}
 	
-	@ResponseStatus(HttpStatus.NO_CONTENT) /*deleta algo*/
-	@DeleteMapping("/{id}")
-	public void delete(@PathVariable Long id) {
-		Optional<Postagem> postagem = postagemRepository.findById(id);
-		
-		if(postagem.isEmpty())
-			throw  new ResponseStatusException(HttpStatus.NOT_FOUND);
-		
-		postagemRepository.deleteById(id);
+	@GetMapping("/titulo/{titulo}")
+	public ResponseEntity<List<Postagem>> GetByTitulo(@PathVariable String titulo){
+		return ResponseEntity.ok(repository.findAllByTituloContainingIgnoreCase(titulo));
+	}
 	
+	@PostMapping
+	public ResponseEntity<Postagem> post (@RequestBody Postagem postagem){
+		return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(postagem));
+	}
+	
+	@PutMapping
+	public ResponseEntity<Postagem> put (@RequestBody Postagem postagem){
+		return ResponseEntity.status(HttpStatus.OK).body(repository.save(postagem));
+	}
+		
+  @DeleteMapping("/{id}")
+  public void delete(@PathVariable Long id) {
+  	repository.deleteById(id);
+  }
 }
-}
+	

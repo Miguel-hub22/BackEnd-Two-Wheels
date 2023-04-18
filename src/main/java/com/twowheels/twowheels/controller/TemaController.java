@@ -32,8 +32,8 @@ public class TemaController {
 	@Autowired
 	private TemaRepository temaRepository;
 	
-	@Autowired
-	private PostagemRepository postagemRepository;
+	/* @Autowired
+	private PostagemRepository postagemRepository;*/
 	
 	@GetMapping
 	public ResponseEntity<List<Tema>> getAll(){

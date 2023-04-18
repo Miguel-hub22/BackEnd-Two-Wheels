@@ -11,7 +11,7 @@ import com.twowheels.twowheels.model.Postagem;
 @Repository
 public interface PostagemRepository  extends JpaRepository<Postagem, Long> {
 	
-	public List <Postagem> findAllByTituloContainingIgnoreCase(@Param("titulo")String titulo);
+	public List <Postagem> findAllByTituloContainingIgnoreCase(String Titulo);
 	
 
 }
